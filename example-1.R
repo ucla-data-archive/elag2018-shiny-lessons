@@ -10,46 +10,62 @@
 library(shiny)
 library(readr)
 
-# Define UI for application that draws a histogram
+# Define UI for app that draws a histogram ----
 ui <- fluidPage(
-   
-   # Application title
-   titlePanel("Los Angeles Library Monthly Circulation Data"),
-   
-   # Sidebar with a slider input for number of bins 
-   sidebarLayout(
-      sidebarPanel(
-        "sidebar panel",
-         sliderInput("bins",
-                     "Number of bins:",
-                     min = 1,
-                     max = 50,
-                     value = 30)
-      ),
+  
+  # App title ----
+  titlePanel("Hello Shiny!"),
+  
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
+    
+    # Sidebar panel for inputs ----
+    sidebarPanel(
       
-      # Show a plot of the generated distribution
-      mainPanel(
-        "main panel",
-         plotOutput("distPlot")
-      )
-   )
+      # Input: Slider for the number of bins ----
+      sliderInput(inputId = "bins",
+                  label = "Number of bins:",
+                  min = 1,
+                  max = 50,
+                  value = 30)
+      
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      
+      # Output: Histogram ----
+      plotOutput(outputId = "distPlot")
+      
+    )
+  )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-   circstats <- read_csv(file = "https://data.lacounty.gov/api/views/gf6j-sjun/rows.csv?accessType=DOWNLOAD")
-   output$distPlot <- renderPlot({
-      # generate bins based on input$bins from ui.R
-      x    <- circstats$Circulation
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
-      
-      # draw the histogram with the specified number of bins
-      hist(x, breaks = bins, col = 'darkgray', border = 'white',
-           xlab = "Monthly circulation count",
-           main = "Histogram of individual library monthly circulation")
-   })
-}
 
+# Define server logic required to draw a histogram ----
+server <- function(input, output) {
+  
+  # Histogram of the number monthly circulations at Los Angeles libraries
+  # over a 24 month period
+  # with requested number of bins
+  # This expression that generates a histogram is wrapped in a call
+  # to renderPlot to indicate that:
+  #
+  # 1. It is "reactive" and therefore should be automatically
+  #    re-executed when inputs (input$bins) change
+  # 2. Its output type is a plot
+  output$distPlot <- renderPlot({
+    
+    circstats <- read_csv(file = "https://data.lacounty.gov/api/views/gf6j-sjun/rows.csv?accessType=DOWNLOAD")
+    x <- circstats$Circulation
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    
+    hist(x, breaks = bins, col = "#75AADB", border = "white",
+         xlab = "Monthly circulation count",
+         main = "Histogram of individual library monthly circulation")
+    
+  })
+  
+}
 # Run the application 
 shinyApp(ui = ui, server = server)
-
