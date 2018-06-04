@@ -14,7 +14,7 @@ library(readr)
 ui <- fluidPage(
   
   # App title ----
-  titlePanel("Hello Shiny!"),
+  titlePanel("LA County Library Circulation Statistics"),
   
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
